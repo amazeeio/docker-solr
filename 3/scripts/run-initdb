@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Run the init-solr-home script and source any '.sh' scripts in
+# /docker-entrypoint-initdb.d.
+
+set -e
+
+# execute files in /docker-entrypoint-initdb.d before starting solr
+while read f; do
+    fpath="/docker-entrypoint-initdb.d/$f"
+    case "$f" in
+        *.sh)     echo "$0: running $fpath"; . "$fpath" ;;
+        *)        echo "$0: ignoring $fpath" ;;
+    esac
+    echo
+done < <(ls /docker-entrypoint-initdb.d/ | sort -n)

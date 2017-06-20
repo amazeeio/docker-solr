@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+
+set -e
+
+echo "Executing $0 $@"
+
+if [[ "$VERBOSE" = "yes" ]]; then
+    set -x
+fi
+
+. /opt/docker-solr/scripts/run-initdb
+
+CORE=${1:-gettingstarted}
+CONFIG_SOURCE=${2}
+
+# standalone
+coredir="/opt/solr/$CORE"
+
+if [[ ! -d $coredir ]]; then
+    cp -r "/opt/solr/example" $coredir
+    rm -fr $coredir/{example-DIH,exampledocs,multicore}
+    rm -fr $coredir/solr/conf
+    cp -r $CONFIG_SOURCE/ $coredir/solr/conf
+    touch "$coredir/core.properties"
+    echo created "$CORE"
+else
+    echo "core $CORE already exists"
+fi
+cd $coredir
+exec java -jar start.jar
