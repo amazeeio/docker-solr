@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #
 # docker-entrypoint for docker-solr
