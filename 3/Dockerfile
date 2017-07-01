@@ -8,6 +8,9 @@ ENV AMAZEEIO_AUTODISCOVERY_SOLR true
 ENV SOLR_USER solr
 ENV SOLR_UID 8983
 
+RUN apk add --no-cache \
+        bash
+
 RUN addgroup -g $SOLR_UID $SOLR_USER && \
     adduser -u $SOLR_UID -G $SOLR_USER $SOLR_USER -D
 
@@ -15,7 +18,7 @@ RUN wget -q $SOLR_URL -O /tmp/$SOLR_TGZ && \
     mkdir -p $INSTALL_PATH && \
     tar -C $INSTALL_PATH --extract --file /tmp/$SOLR_TGZ --strip-components=1 && \
     rm /tmp/$SOLR_TGZ && \
-    mkdir -p /docker-entrypoint-initdb.d /opt/docker-solr/ /opt/solr/server/solr/mycores && \
+    mkdir -p /docker-entrypoint-initdb.d /opt/docker-solr/ /opt/solr/server/solr/mycores /solr-conf && \
     chown -R $SOLR_USER:$SOLR_USER $INSTALL_PATH
 
 COPY drupal-4.3-solr-3.x/conf/ /solr-conf
@@ -26,6 +29,7 @@ ENV PATH /opt/solr/bin:/opt/docker-solr/scripts:$PATH
 
 EXPOSE 8983
 USER $SOLR_USER
+WORKDIR /opt/solr
 
 VOLUME /opt/solr/server/solr/mycores/
 
