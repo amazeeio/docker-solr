@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM openjdk:7-jre-alpine
 
 ENV SOLR_VERSION 3.6.2
 ENV SOLR_TGZ apache-solr-$SOLR_VERSION.tgz
