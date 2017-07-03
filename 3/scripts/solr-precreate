@@ -19,13 +19,15 @@ coredir="/opt/solr/$CORE"
 
 if [[ ! -d $coredir ]]; then
     cp -r "/opt/solr/example" $coredir
-    rm -fr $coredir/{example-DIH,exampledocs,multicore}
-    rm -fr $coredir/solr/conf
-    cp -r $CONFIG_SOURCE/ $coredir/solr/conf
-    touch "$coredir/core.properties"
+    rm -fr $coredir/{example-DIH,exampledocs}
+    rm -rf $coredir/multicore/core*
+    mkdir -p $coredir/multicore/$CORE
+    cp -r $CONFIG_SOURCE/ $coredir/multicore/$CORE/conf
+    sed -i.bak '/core[0-9]/d' $coredir/multicore/solr.xml
+    sed -i.bak '/cores adminPath/a \    <core name="drupal" instanceDir="drupal" />' $coredir/multicore/solr.xml
     echo created "$CORE"
 else
     echo "core $CORE already exists"
 fi
 cd $coredir
-exec java -jar start.jar
+exec java -jar -Dsolr.solr.home=multicore start.jar
